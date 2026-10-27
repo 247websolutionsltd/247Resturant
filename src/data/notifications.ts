@@ -1,6 +1,6 @@
-import { IconName } from "./categories";
+import { IconName } from "./icons";
 
-export type NotificationType = "Transactions" | "Security" | "Offers";
+export type NotificationType = "Orders" | "Offers" | "Account";
 
 export type AppNotification = {
   id: string;
@@ -19,19 +19,19 @@ export type NewNotification = Omit<AppNotification, "id" | "ts" | "unread">;
 
 export const welcomeNotifications = (firstName?: string): NewNotification[] => [
   {
-    title: firstName ? `Welcome to Verdi, ${firstName}` : "Welcome to Verdi",
-    desc: "Add money to your wallet to get started.",
+    title: firstName ? `Welcome to Ember, ${firstName}` : "Welcome to Ember",
+    desc: "Your first order is 20% off with code WELCOME.",
     detail:
-      "Your wallet is ready. Add money by bank transfer, then send it, pay bills or start saving toward a goal.",
-    icon: "sparkles",
+      "Pick something hot from the menu, add code WELCOME at checkout and we'll take 20% off (up to ₦2,000). Every order earns points toward Silver and Gold perks.",
+    icon: "flame",
     type: "Offers",
-    action: { label: "Add money", route: "/add-money/bank" },
+    action: { label: "Browse the menu", route: "/(tabs)/menu" },
   },
   {
-    title: "Earn ₦2,000 per friend",
-    desc: "Invite friends and both of you win.",
+    title: "Give ₦1,000, get ₦1,000",
+    desc: "Invite friends and you both eat for less.",
     detail:
-      "Share your referral code. When a friend signs up and funds their wallet, you both get ₦2,000 straight into your balance.",
+      "Share your referral code. When a friend places their first order with it, you both get ₦1,000 off your next order.",
     icon: "gift",
     type: "Offers",
     action: { label: "Invite friends", route: "/refer" },

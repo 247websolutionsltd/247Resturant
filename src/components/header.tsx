@@ -1,4 +1,4 @@
-import { Radius, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -8,18 +8,23 @@ import { ThemedText } from "./themed-text";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 
+/** Rounded-square icon button (back, bell, heart...). */
 export function RoundButton({
   icon,
   onPress,
   label,
   onHero = false,
   dot = false,
+  active = false,
+  size = 42,
 }: {
   icon: IconName;
   onPress?: () => void;
   label?: string;
   onHero?: boolean;
   dot?: boolean;
+  active?: boolean;
+  size?: number;
 }) {
   const theme = useTheme();
   return (
@@ -28,29 +33,29 @@ export function RoundButton({
       accessibilityRole="button"
       accessibilityLabel={label ?? icon}
       style={{
-        width: 44,
-        height: 44,
-        borderRadius: Radius.pill,
+        width: size,
+        height: size,
+        borderRadius: 14,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: onHero ? "rgba(255,255,255,0.14)" : theme.card,
-        borderWidth: onHero ? 0 : 1,
-        borderColor: theme.line,
+        backgroundColor: onHero ? "rgba(255,255,255,0.2)" : active ? theme.accentSurface : theme.card,
+        borderWidth: onHero ? 0 : 1.5,
+        borderColor: active ? theme.accent : theme.line,
       }}
     >
-      <Ionicons name={icon} size={20} color={onHero ? "#FFF" : theme.text} />
+      <Ionicons name={icon} size={size * 0.48} color={onHero ? "#FFF" : active ? theme.accent : theme.text} />
       {dot && (
         <View
           style={{
             position: "absolute",
-            top: 11,
-            right: 12,
-            width: 9,
-            height: 9,
+            top: 9,
+            right: 10,
+            width: 10,
+            height: 10,
             borderRadius: 5,
-            backgroundColor: theme.danger,
-            borderWidth: 1.5,
-            borderColor: onHero ? "#17482F" : theme.card,
+            backgroundColor: theme.accent,
+            borderWidth: 2,
+            borderColor: onHero ? "#D7261E" : theme.card,
           }}
         />
       )}
@@ -58,7 +63,7 @@ export function RoundButton({
   );
 }
 
-/** Standard screen header: back button, centred title, optional right slot. */
+/** Standard screen header: back button, centred serif title, optional right slot. */
 export default function Header({
   title,
   right,
@@ -81,13 +86,13 @@ export default function Header({
         minHeight: 60,
       }}
     >
-      <View style={{ width: 44 }}>
-        {back && <RoundButton icon="chevron-back" label="Go back" onPress={onBack ?? (() => router.back())} />}
+      <View style={{ width: 56 }}>
+        {back && <RoundButton icon="chevron-back" label="Go back" onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/home" as never)))} />}
       </View>
-      <ThemedText type="bold" numberOfLines={1} style={{ flex: 1, textAlign: "center" }}>
+      <ThemedText type="big" numberOfLines={1} style={{ flex: 1, textAlign: "center" }}>
         {title}
       </ThemedText>
-      <View style={{ width: 44, alignItems: "flex-end" }}>{right}</View>
+      <View style={{ width: 56, alignItems: "flex-end" }}>{right}</View>
     </View>
   );
 }

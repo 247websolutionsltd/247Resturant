@@ -4,18 +4,18 @@ import NotificationCard from "@/components/notification";
 import { ThemedText } from "@/components/themed-text";
 import { Chip } from "@/components/ui";
 import { Spacing } from "@/constants/theme";
-import { useWallet } from "@/context/WalletContext";
+import { useOrders } from "@/context/OrdersContext";
 import { useTheme } from "@/hooks/use-theme";
 import { timeAgo } from "@/lib/format";
 import { go } from "@/lib/nav";
 import { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 
-const filters = ["All", "Transactions", "Security", "Offers"] as const;
+const filters = ["All", "Orders", "Offers", "Account"] as const;
 
 export default function Notifications() {
   const theme = useTheme();
-  const { notifications, markAllRead, markNotificationRead } = useWallet();
+  const { notifications, markAllRead, markNotificationRead } = useOrders();
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const list = notifications.filter((n) => filter === "All" || n.type === filter);
   const hasUnread = notifications.some((n) => n.unread);
@@ -38,7 +38,7 @@ export default function Notifications() {
         </ScrollView>
       </View>
       <View style={{ paddingHorizontal: Spacing.three }}>
-        {list.length === 0 && <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.five }}>You're all caught up.</ThemedText>}
+        {list.length === 0 && <ThemedText themeColor="textSecondary" style={{ textAlign: "center", marginTop: Spacing.five }}>Nothing new. You're all caught up.</ThemedText>}
         {list.map((n) => (
           <NotificationCard
             key={n.id}

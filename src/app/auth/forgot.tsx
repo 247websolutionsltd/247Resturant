@@ -38,7 +38,9 @@ export default function Forgot() {
 
   return (
     <AuthShell
-      title={sent ? "Check your email" : "Forgot password?"}
+      compact
+      emoji={sent ? "💌" : "🔑"}
+      title={sent ? "Check your inbox" : "Forgot it?"}
       subtitle={sent ? "Follow the link we sent to choose a new password." : "No stress. We'll email you a link to reset it."}
       onBack={() => router.back()}
     >
@@ -58,9 +60,13 @@ export default function Forgot() {
           <Input label="Email" icon="mail-outline" placeholder="you@example.com" autoCapitalize="none" keyboardType="email-address" value={logInForm.email} onChangeText={(t) => updateLogInField("email", t)} error={error} />
           <Button title="Send reset link" onPress={submit} loading={busy} style={{ marginTop: Spacing.three }} />
           <View style={{ flexDirection: "row", justifyContent: "center", marginTop: Spacing.four }}>
-            <ThemedText type="small" themeColor="textSecondary">Remembered it? </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Remembered it?{" "}
+            </ThemedText>
             <TouchableOpacity onPress={() => goReplace("/auth/logIn")} hitSlop={8}>
-              <ThemedText type="smallBold" style={{ color: theme.accent }}>Back to sign in</ThemedText>
+              <ThemedText type="smallBold" style={{ color: theme.accent }}>
+                Back to sign in
+              </ThemedText>
             </TouchableOpacity>
           </View>
         </>

@@ -1,5 +1,5 @@
 import { Radius, Spacing } from "@/constants/theme";
-import { IconName } from "@/data/categories";
+import { IconName } from "@/data/icons";
 import { useTheme } from "@/hooks/use-theme";
 import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "./themed-text";
@@ -31,12 +31,12 @@ export default function NotificationCard({
         padding: Spacing.three,
         borderRadius: Radius.md,
         backgroundColor: unread ? theme.accentSurface : theme.card,
-        borderWidth: 1,
-        borderColor: theme.line,
+        borderWidth: 1.5,
+        borderColor: unread ? theme.accent : theme.line,
         marginBottom: Spacing.two + 2,
       }}
     >
-      <IconBadge icon={icon} size={44} round bg={theme.cardAlt} />
+      <IconBadge icon={icon} size={44} />
       <View style={{ flex: 1, marginLeft: Spacing.three }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <ThemedText type="smallBold" style={{ flex: 1 }} numberOfLines={1}>

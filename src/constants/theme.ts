@@ -1,94 +1,101 @@
 /**
- * Verdi design tokens.
- * Dark-first: deep forest greens with a lime accent. A light mode is provided too,
- * where the "hero" surfaces (balance card, auth header) stay deep green for brand consistency.
+ * Ember Kitchen design tokens.
+ * Light-first: warm cream paper, ink-brown text and a confident tomato red.
+ * Dark mode swaps to a deep, smoky maroon-black while keeping the same red as the hero colour.
  */
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
 const palette = {
-  forest950: '#04120C',
-  forest900: '#071A12',
-  forest850: '#0A2218',
-  forest800: '#0D2B1E',
-  forest700: '#123A29',
-  forest600: '#17482F',
-  forest500: '#1E5C3E',
-  forest400: '#2E7D57',
-  mint300: '#9FD8B7',
-  mint100: '#DDF3E5',
-  lime: '#B9F55B',
-  limeDeep: '#9BDD3B',
+  red700: '#9E1510',
+  red600: '#B91C16',
+  red500: '#D7261E',
+  red400: '#EF4A3F',
+  red300: '#FF7A6E',
+  red100: '#FDE4E0',
+  red50: '#FFF1EE',
+  saffron: '#FFB703',
+  saffronDeep: '#B07A00',
+  saffronSoft: '#FFF3CC',
+  cream: '#FFF8F0',
+  creamDeep: '#F8EBDD',
+  ink: '#2A1411',
+  smoke950: '#150A09',
+  smoke900: '#1D0F0D',
+  smoke800: '#2A1613',
+  smoke700: '#3A1D19',
   white: '#FFFFFF',
-  danger: '#FF6B6B',
-  warning: '#FFC857',
-  success: '#4ADE80',
+  leaf: '#2E9E5B',
 } as const;
 
 export const Colors = {
   // Brand constants (theme independent)
-  primary: palette.forest500,
-  primaryDark: palette.forest800,
-  primaryTint: palette.mint100,
-  lime: palette.lime,
+  primary: palette.red500,
+  primaryDark: palette.red700,
+  primaryTint: palette.red100,
+  gold: palette.saffron,
   palette,
 
-  // Hero surfaces stay green in both modes
-  hero: palette.forest600,
-  heroDeep: palette.forest700,
-  heroGlow: palette.forest500,
+  // Hero surfaces (banners, auth header, splash) stay red in both modes
+  hero: palette.red500,
+  heroDeep: palette.red700,
+  heroGlow: palette.red400,
   heroText: '#FFFFFF',
-  heroMuted: 'rgba(255,255,255,0.68)',
-  heroChip: 'rgba(255,255,255,0.12)',
+  heroMuted: 'rgba(255,255,255,0.78)',
+  heroChip: 'rgba(255,255,255,0.18)',
 
   light: {
-    text: '#0B1F16',
-    textSecondary: '#5B7166',
-    background: '#F2F6F3',
-    paper: '#F2F6F3',
+    text: palette.ink,
+    textSecondary: '#7A5F57',
+    background: palette.cream,
+    paper: palette.cream,
     card: '#FFFFFF',
-    cardAlt: '#E7F0EA',
-    backgroundElement: '#E7F0EA',
-    backgroundSelected: '#D5E4DB',
-    line: '#DCE7E0',
-    tint: '#DDF3E5',
-    inkSoft: '#8AA095',
-    accent: '#0F6B45',
-    accentSurface: '#E1F3E8',
-    accentText: '#0B4A30',
-    cta: '#0D3B27',
+    cardAlt: '#FCEFE3',
+    backgroundElement: '#FCEFE3',
+    backgroundSelected: '#F4DFCB',
+    line: '#F0DFD0',
+    tint: palette.red100,
+    inkSoft: '#B39C92',
+    accent: '#C8201A',
+    accentSurface: palette.red50,
+    accentText: '#A5140F',
+    cta: palette.red500,
     ctaText: '#FFFFFF',
-    controlOff: '#C9D6CE',
+    controlOff: '#E4D2C4',
     controlThumb: '#FFFFFF',
-    danger: '#D64545',
-    success: '#1E9E5A',
-    warning: '#C98A00',
-    overlay: 'rgba(7,26,18,0.5)',
+    danger: '#C62828',
+    success: '#1F8A4C',
+    warning: '#B07A00',
+    gold: palette.saffron,
+    goldSurface: palette.saffronSoft,
+    overlay: 'rgba(42,20,17,0.55)',
   },
   dark: {
-    text: '#F1F7F3',
-    textSecondary: '#8FAA9C',
-    background: palette.forest950,
-    paper: palette.forest950,
-    card: palette.forest850,
-    cardAlt: palette.forest800,
-    backgroundElement: palette.forest800,
-    backgroundSelected: palette.forest700,
-    line: '#16352A',
-    tint: palette.forest700,
-    inkSoft: '#5E7C6D',
-    accent: palette.lime,
-    accentSurface: '#123324',
-    accentText: palette.lime,
-    cta: palette.lime,
-    ctaText: palette.forest950,
-    controlOff: '#2A4A3B',
+    text: '#FBEFE8',
+    textSecondary: '#C2A196',
+    background: palette.smoke950,
+    paper: palette.smoke950,
+    card: palette.smoke900,
+    cardAlt: palette.smoke800,
+    backgroundElement: palette.smoke800,
+    backgroundSelected: palette.smoke700,
+    line: '#3A201C',
+    tint: '#3D1713',
+    inkSoft: '#8F7167',
+    accent: '#FF6A5F',
+    accentSurface: '#2E1512',
+    accentText: '#FF8C82',
+    cta: '#DC2A22',
+    ctaText: '#FFFFFF',
+    controlOff: '#4A2B26',
     controlThumb: '#FFFFFF',
-    danger: palette.danger,
-    success: palette.success,
-    warning: palette.warning,
-    overlay: 'rgba(0,0,0,0.6)',
+    danger: '#FF7B72',
+    success: '#4ADE80',
+    warning: '#FFC857',
+    gold: palette.saffron,
+    goldSurface: '#3A2C0A',
+    overlay: 'rgba(0,0,0,0.65)',
   },
 } as const;
 
@@ -98,7 +105,7 @@ export type AppColors = typeof Colors.light | typeof Colors.dark;
 export const Fonts = Platform.select({
   ios: {
     sans: 'system-ui',
-    serif: 'ui-serif',
+    serif: 'Georgia',
     rounded: 'ui-rounded',
     mono: 'ui-monospace',
   },
@@ -116,6 +123,9 @@ export const Fonts = Platform.select({
   },
 });
 
+/** Headline face used for display text, prices and section titles. */
+export const SerifFont = Fonts?.serif as string;
+
 export const Spacing = {
   half: 2,
   one: 4,
@@ -126,16 +136,17 @@ export const Spacing = {
   six: 64,
 } as const;
 
+/** Tighter, squarer corners than before: Ember is crisp and editorial rather than pill-shaped. */
 export const Radius = {
-  sm: 12,
-  md: 18,
-  lg: 26,
-  xl: 34,
+  sm: 8,
+  md: 14,
+  lg: 20,
+  xl: 28,
   pill: 999,
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
 
-/** Bottom padding tab screens need so content clears the floating tab bar. */
-export const TabBarSpace = 128;
+/** Bottom padding tab screens need so content clears the tab bar (and the floating cart bar). */
+export const TabBarSpace = 150;

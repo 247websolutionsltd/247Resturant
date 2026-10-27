@@ -22,7 +22,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function AppThemeProvider({
   children,
-  initialTheme = "dark",
+  initialTheme = "light",
 }: {
   children: ReactNode;
   initialTheme?: ThemeMode;
@@ -52,11 +52,9 @@ type RegisterForm = { email: string; password: string; confirm: string; name: st
 
 export type Owner = {
   name: string;
-  tier: string;
   phone: string;
   email: string;
   referralCode: string;
-  accountNumber: string;
 };
 
 type AuthContextType = {
@@ -82,7 +80,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const emptyLogin: LogInForm = { email: "", password: "" };
 const emptyRegister: RegisterForm = { email: "", password: "", confirm: "", name: "", phone: "" };
-const emptyOwner: Owner = { name: "", tier: "", phone: "", email: "", referralCode: "", accountNumber: "" };
+const emptyOwner: Owner = { name: "", phone: "", email: "", referralCode: "" };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
@@ -115,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Create / repair the account document (no-op when it's already fine).
       ensureUserAccount(fbUser).catch((e) => console.error("[auth] ensureUserAccount failed", e));
 
-      // Live profile: balance, name, phone, card state... update everywhere instantly.
+      // Live profile: name, phone, points, favourites... update everywhere instantly.
       unsubProfile = subscribeUserProfile(
         fbUser.uid,
         (profile) => {
@@ -143,9 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: user?.displayName ?? auth.currentUser?.displayName ?? "",
       email: user?.email ?? auth.currentUser?.email ?? "",
       phone: user?.phone ?? "",
-      tier: user?.tier ?? "",
       referralCode: user?.referralCode ?? "",
-      accountNumber: user?.accountNumber ?? "",
     };
   }, [uid, user]);
 

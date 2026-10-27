@@ -79,7 +79,7 @@ export default function GoogleSignInButton() {
         const credential = GoogleAuthProvider.credential(idToken);
         user = (await signInWithCredential(auth, credential)).user;
       }
-      // Creates the wallet profile for first-time Google users; no-op for existing ones.
+      // Creates the customer profile for first-time Google users; no-op for existing ones.
       await ensureUserAccount(user);
       goReplace("/(tabs)/home");
     } catch (error) {
@@ -96,9 +96,9 @@ export default function GoogleSignInButton() {
       disabled={loading}
       style={{
         flex: 1,
-        height: 52,
-        borderRadius: Radius.pill,
-        borderWidth: 1,
+        height: 54,
+        borderRadius: Radius.md,
+        borderWidth: 1.5,
         borderColor: theme.line,
         backgroundColor: theme.card,
         alignItems: "center",
@@ -112,7 +112,7 @@ export default function GoogleSignInButton() {
       ) : (
         <>
           <Ionicons name="logo-google" size={19} color={theme.text} />
-          <ThemedText type="smallBold" style={{ marginLeft: Spacing.two }}>Google</ThemedText>
+          <ThemedText type="smallBold" style={{ marginLeft: Spacing.two + 2 }}>Continue with Google</ThemedText>
         </>
       )}
     </TouchableOpacity>

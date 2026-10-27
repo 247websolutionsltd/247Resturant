@@ -39,7 +39,7 @@ export default function Input({
   return (
     <View style={{ paddingVertical: Spacing.two }}>
       {label ? (
-        <ThemedText type="small" themeColor="textSecondary" style={{ marginBottom: Spacing.two }}>
+        <ThemedText type="smallBold" style={{ marginBottom: Spacing.two - 2, marginLeft: 2 }}>
           {label}
         </ThemedText>
       ) : null}
@@ -47,7 +47,7 @@ export default function Input({
         style={{
           flexDirection: "row",
           alignItems: desc ? "flex-start" : "center",
-          minHeight: desc ? 110 : 58,
+          minHeight: desc ? 100 : 54,
           paddingHorizontal: Spacing.three,
           borderRadius: Radius.md,
           backgroundColor: theme.card,
@@ -55,7 +55,7 @@ export default function Input({
           borderColor: error ? theme.danger : focused ? theme.accent : theme.line,
         }}
       >
-        {icon && <Ionicons name={icon} size={20} color={focused ? theme.accent : theme.textSecondary} style={{ marginRight: Spacing.two, marginTop: desc ? 16 : 0 }} />}
+        {icon && <Ionicons name={icon} size={19} color={focused ? theme.accent : theme.inkSoft} style={{ marginRight: Spacing.two + 2, marginTop: desc ? 16 : 0 }} />}
         {prefix && (
           <ThemedText type="bold" themeColor="textSecondary" style={{ marginRight: Spacing.one, marginTop: desc ? 14 : 0 }}>
             {prefix}
@@ -68,9 +68,11 @@ export default function Input({
               flex: 1,
               color: theme.text,
               fontSize: 16,
-              paddingVertical: desc ? 16 : 0,
-              height: desc ? undefined : 58,
+              paddingVertical: desc ? 14 : 0,
+              height: desc ? undefined : 54,
               textAlignVertical: desc ? "top" : "center",
+              // keeps the web focus ring from fighting our own border
+              ...({ outlineStyle: "none" } as object),
             },
             style,
           ]}
@@ -96,7 +98,7 @@ export default function Input({
         {right}
       </View>
       {error ? (
-        <ThemedText type="caption" style={{ color: theme.danger, marginTop: Spacing.one }}>
+        <ThemedText type="caption" style={{ color: theme.danger, marginTop: Spacing.one + 2, marginLeft: 2 }}>
           {error}
         </ThemedText>
       ) : null}

@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { Colors, SerifFont } from "@/constants/theme";
 import { initials } from "@/lib/format";
 import { View } from "react-native";
 import { ThemedText } from "./themed-text";
@@ -9,14 +9,14 @@ export default function Avatar({ name, size = 46, onHero = false }: { name: stri
       style={{
         width: size,
         height: size,
-        borderRadius: size / 2,
-        backgroundColor: onHero ? Colors.heroChip : Colors.lime,
+        borderRadius: size * 0.34,
+        backgroundColor: onHero ? "#FFF8F0" : Colors.palette.saffron,
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <ThemedText style={{ color: onHero ? "#FFF" : Colors.palette.forest950, fontWeight: "800", fontSize: size * 0.36 }}>
-        {initials(name)}
+      <ThemedText style={{ fontFamily: SerifFont, color: onHero ? Colors.heroDeep : Colors.palette.ink, fontWeight: "800", fontSize: size * 0.38 }}>
+        {initials(name) || "🍴"}
       </ThemedText>
     </View>
   );

@@ -1,7 +1,7 @@
 import { useTheme } from "@/hooks/use-theme";
+import { ReactNode } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, StyleProp, ViewStyle } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { ReactNode } from "react";
 
 interface ContainerProps {
   children?: ReactNode;

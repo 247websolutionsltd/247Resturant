@@ -1,14 +1,17 @@
 import {
+  arrayRemove,
+  arrayUnion,
+  collection,
   doc,
   onSnapshot,
   runTransaction,
   serverTimestamp,
   setDoc,
-  collection,
   type DocumentSnapshot,
   type Unsubscribe,
 } from "firebase/firestore";
 
+import { Brand } from "@/constants/brand";
 import { welcomeNotifications } from "@/data/notifications";
 import type { User } from "firebase/auth";
 import { db } from "../config/firebase";
@@ -19,36 +22,41 @@ export type UserProfile = {
   displayName?: string;
   photoURL?: string;
   phone?: string;
-  balance: number;
-  accountNumber: string;
   referralCode: string;
-  tier: string;
-  cardFrozen: boolean;
-  roundUps: boolean;
+  /** loyalty points (1 per ₦100 spent) */
+  points: number;
+  /** menu item ids */
+  favorites: string[];
 };
 
-export const DEFAULT_TIER = "Tier 1 · Basic";
-
 export const userRef = (uid: string) => doc(db, "users", uid);
+
+/** Loyalty tier for a points total, plus progress to the next one. */
+export function tierFor(points: number) {
+  const tiers = Brand.tiers;
+  let idx = 0;
+  tiers.forEach((t, i) => {
+    if (points >= t.min) idx = i;
+  });
+  const next = tiers[idx + 1];
+  return {
+    name: tiers[idx].name,
+    next: next?.name ?? null,
+    toNext: next ? next.min - points : 0,
+    progress: next ? (points - tiers[idx].min) / (next.min - tiers[idx].min) : 1,
+  };
+}
 
 /* ------------------------------ generators ------------------------------- */
 
 const digits = (n: number) => Array.from({ length: n }, () => Math.floor(Math.random() * 10)).join("");
 
-// NOTE: random, not guaranteed unique. Issue real account numbers from a server in production.
-export const generateAccountNumber = () => "70" + digits(8);
-
 export function generateReferralCode(name?: string | null) {
-  const letters = (name ?? "").replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 3).padEnd(3, "V");
+  const letters = (name ?? "").replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 3).padEnd(3, "E");
   return letters + digits(4);
 }
 
 /* -------------------------------- mapping -------------------------------- */
-
-const toNumber = (v: unknown): number | null => {
-  const n = typeof v === "number" ? v : typeof v === "string" && v.trim() !== "" ? Number(v) : NaN;
-  return Number.isFinite(n) ? n : null;
-};
 
 export function toProfile(snap: DocumentSnapshot): UserProfile | null {
   if (!snap.exists()) return null;
@@ -60,21 +68,17 @@ export function toProfile(snap: DocumentSnapshot): UserProfile | null {
     photoURL: d.photoURL,
     // older docs stored this as `phoneNumber`
     phone: d.phone ?? d.phoneNumber ?? "",
-    balance: toNumber(d.balance) ?? 0,
-    accountNumber: d.accountNumber ?? "",
     referralCode: d.referralCode ?? "",
-    tier: d.tier ?? DEFAULT_TIER,
-    cardFrozen: d.cardFrozen === true,
-    roundUps: d.roundUps !== false,
+    points: typeof d.points === "number" && Number.isFinite(d.points) ? d.points : 0,
+    favorites: Array.isArray(d.favorites) ? d.favorites.filter((x: unknown) => typeof x === "string") : [],
   };
 }
 
 /* ------------------------------ operations ------------------------------- */
 
 /**
- * Idempotent: creates the account document for a new user (balance 0, account number,
- * referral code, welcome notifications) and repairs documents from older app versions
- * (string balances, missing account number...). Safe to call on every sign-in.
+ * Idempotent: creates the profile document for a new customer (referral code, welcome
+ * notifications) and repairs documents from older versions of the app. Safe to call on every sign-in.
  */
 export async function ensureUserAccount(
   user: User,
@@ -93,12 +97,9 @@ export async function ensureUserAccount(
         ...(displayName ? { displayName } : {}),
         ...(user.photoURL ? { photoURL: user.photoURL } : {}),
         phone: extra.phone?.trim() ?? "",
-        balance: 0,
-        accountNumber: generateAccountNumber(),
         referralCode: generateReferralCode(displayName),
-        tier: DEFAULT_TIER,
-        cardFrozen: false,
-        roundUps: true,
+        points: 0,
+        favorites: [],
         createdAt: Date.now(),
         updatedAt: serverTimestamp(),
       });
@@ -112,15 +113,9 @@ export async function ensureUserAccount(
     const d = snap.data();
     const patch: Record<string, unknown> = {};
 
-    const balance = toNumber(d.balance);
-    if (balance === null || balance < 0) throw new Error("The stored wallet balance is invalid.");
-    if (typeof d.balance !== "number") patch.balance = balance; // legacy string balance
-
-    if (!d.accountNumber) patch.accountNumber = generateAccountNumber();
     if (!d.referralCode) patch.referralCode = generateReferralCode(displayName ?? d.displayName);
-    if (!d.tier) patch.tier = DEFAULT_TIER;
-    if (typeof d.cardFrozen !== "boolean") patch.cardFrozen = false;
-    if (typeof d.roundUps !== "boolean") patch.roundUps = true;
+    if (typeof d.points !== "number") patch.points = 0;
+    if (!Array.isArray(d.favorites)) patch.favorites = [];
     if (!d.phone && d.phoneNumber) patch.phone = d.phoneNumber;
     if (extra.displayName?.trim() && d.displayName !== extra.displayName.trim()) patch.displayName = extra.displayName.trim();
     if (extra.phone?.trim() && d.phone !== extra.phone.trim()) patch.phone = extra.phone.trim();
@@ -138,10 +133,15 @@ export function subscribeUserProfile(
   return onSnapshot(userRef(uid), (snap) => onData(toProfile(snap)), onError);
 }
 
-/** Only fields a customer may change directly. Balance is never written from here. */
-export async function updateUserProfile(
-  uid: string,
-  patch: Partial<Pick<UserProfile, "displayName" | "phone" | "cardFrozen" | "roundUps">>,
-) {
+/** Only fields a customer may change directly. Points are only ever written by placing an order. */
+export async function updateUserProfile(uid: string, patch: Partial<Pick<UserProfile, "displayName" | "phone">>) {
   await setDoc(userRef(uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
+}
+
+export async function setFavorite(uid: string, itemId: string, on: boolean) {
+  await setDoc(
+    userRef(uid),
+    { favorites: on ? arrayUnion(itemId) : arrayRemove(itemId), updatedAt: serverTimestamp() },
+    { merge: true },
+  );
 }

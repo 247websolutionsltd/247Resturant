@@ -1,11 +1,13 @@
+import { Logo } from "@/components/brand";
 import Button from "@/components/button";
+import { RoundButton } from "@/components/header";
 import OnboardingItem from "@/components/onboard";
 import Paginator from "@/components/paginator";
-import { RoundButton } from "@/components/header";
-import { Logo } from "@/components/brand";
 import { ThemedText } from "@/components/themed-text";
-import { Colors, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { onboardingData } from "@/data/onboardData";
+import { useAppTheme } from "@/context/PageContext";
+import { useTheme } from "@/hooks/use-theme";
 import { goReplace } from "@/lib/nav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRef, useState } from "react";
@@ -13,6 +15,8 @@ import { FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Onboarding() {
+  const theme = useTheme();
+  const { themeMode } = useAppTheme();
   const [index, setIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const listRef = useRef<FlatList<any> | null>(null);
@@ -46,12 +50,12 @@ export default function Onboarding() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.palette.forest900 }} edges={["top", "bottom"]}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }} edges={["top", "bottom"]}>
+      <StatusBar barStyle={themeMode === "dark" ? "light-content" : "dark-content"} />
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: Spacing.four, paddingTop: Spacing.two }}>
-        <Logo size={32} light />
+        <Logo size={34} />
         <TouchableOpacity onPress={skip} hitSlop={12}>
-          <ThemedText type="smallBold" style={{ color: Colors.heroMuted }}>Skip</ThemedText>
+          <ThemedText type="smallBold" themeColor="textSecondary">I have an account</ThemedText>
         </TouchableOpacity>
       </View>
 
@@ -73,12 +77,11 @@ export default function Onboarding() {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {index > 0 && (
               <View style={{ marginRight: Spacing.two }}>
-                <RoundButton icon="chevron-back" onHero onPress={prev} label="Previous" />
+                <RoundButton icon="chevron-back" size={52} onPress={prev} label="Previous" />
               </View>
             )}
             <Button
-              variant="lime"
-              title={last ? "Get started" : "Next"}
+              title={last ? "Let's eat" : "Next"}
               icon={last ? undefined : "arrow-forward"}
               onPress={next}
               loading={busy}

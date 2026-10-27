@@ -4,7 +4,7 @@ import Header from "@/components/header";
 import { ThemedText } from "@/components/themed-text";
 import { Card, IconBadge } from "@/components/ui";
 import { Spacing } from "@/constants/theme";
-import { useWallet } from "@/context/WalletContext";
+import { useOrders } from "@/context/OrdersContext";
 import { timeAgo } from "@/lib/format";
 import { go } from "@/lib/nav";
 import { useLocalSearchParams } from "expo-router";
@@ -12,7 +12,7 @@ import { View } from "react-native";
 
 export default function NotificationDetail() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { notifications } = useWallet();
+  const { notifications } = useOrders();
   const n = notifications.find((x) => x.id === id) ?? notifications[0];
   if (!n) return null;
 

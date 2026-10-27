@@ -1,32 +1,35 @@
 import { Colors, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Logo } from "./brand";
 import { RoundButton } from "./header";
 import { ThemedText } from "./themed-text";
-import { HeroDecor } from "./ui";
+import { Awning } from "./ui";
 
 /**
- * Shared frame for every sign-in style screen: a deep-green hero with the headline,
- * and a rounded "sheet" that slides up over it holding the form.
+ * Shared frame for the sign-in screens. A striped shop awning hangs from the top, a big
+ * serif headline sits under it with a "plate" of food, and the form follows on plain paper.
  */
 export default function AuthShell({
   title,
   subtitle,
   onBack,
-  hero,
+  emoji = "🍛",
+  compact = false,
   children,
 }: {
   title: string;
   subtitle?: string;
   onBack?: () => void;
-  hero?: boolean;
+  emoji?: string;
+  compact?: boolean;
   children: ReactNode;
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const plate = compact ? 84 : 118;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -39,36 +42,49 @@ export default function AuthShell({
           alwaysBounceVertical={false}
           overScrollMode="never"
         >
-          <View
-            style={{
-              backgroundColor: Colors.hero,
-              paddingTop: insets.top + Spacing.three,
-              paddingHorizontal: Spacing.four,
-              paddingBottom: hero ? 64 : 52,
-            }}
-          >
-            <HeroDecor />
+          <Awning top={insets.top} height={compact ? 14 : 30} />
+
+          <View style={{ paddingHorizontal: Spacing.four, paddingTop: Spacing.three }}>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 44 }}>
-              {onBack ? <RoundButton icon="chevron-back" onHero onPress={onBack} label="Go back" /> : <Logo light />}
+              {onBack ? <RoundButton icon="chevron-back" onPress={onBack} label="Go back" /> : <Logo size={34} />}
               {onBack ? <Logo size={30} showName={false} /> : null}
             </View>
-            <ThemedText type={hero ? "display" : "title"} style={{ color: "#FFF", marginTop: hero ? Spacing.five : Spacing.four }}>
-              {title}
-            </ThemedText>
-            {subtitle ? (
-              <ThemedText style={{ color: Colors.heroMuted, marginTop: Spacing.two }}>{subtitle}</ThemedText>
-            ) : null}
+
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: compact ? Spacing.three : Spacing.four }}>
+              <View style={{ flex: 1, paddingRight: Spacing.two }}>
+                <ThemedText type={compact ? "title" : "display"}>{title}</ThemedText>
+                {subtitle ? (
+                  <ThemedText themeColor="textSecondary" style={{ marginTop: Spacing.two, lineHeight: 22 }}>
+                    {subtitle}
+                  </ThemedText>
+                ) : null}
+              </View>
+              {/* the "plate" */}
+              <View
+                style={{
+                  width: plate,
+                  height: plate,
+                  borderRadius: plate / 2,
+                  backgroundColor: theme.card,
+                  borderWidth: 2,
+                  borderColor: theme.line,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transform: [{ rotate: "8deg" }],
+                }}
+              >
+                <View style={{ width: plate - 18, height: plate - 18, borderRadius: (plate - 18) / 2, backgroundColor: Colors.palette.red100, alignItems: "center", justifyContent: "center" }}>
+                  <Text style={{ fontSize: plate * 0.5 }}>{emoji}</Text>
+                </View>
+              </View>
+            </View>
           </View>
 
           <View
             style={{
               flexGrow: 1,
-              marginTop: -Radius.xl + 6,
-              backgroundColor: theme.background,
-              borderTopLeftRadius: Radius.xl,
-              borderTopRightRadius: Radius.xl,
               paddingHorizontal: Spacing.four,
-              paddingTop: Spacing.four,
+              paddingTop: compact ? Spacing.three : Spacing.four,
               paddingBottom: insets.bottom + Spacing.four,
             }}
           >
@@ -76,6 +92,20 @@ export default function AuthShell({
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+    </View>
+  );
+}
+
+/** "or" divider used between the main action and social sign-in. */
+export function OrDivider({ label = "or" }: { label?: string }) {
+  const theme = useTheme();
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", marginVertical: Spacing.three + 2 }}>
+      <View style={{ flex: 1, height: 1.5, backgroundColor: theme.line, borderRadius: Radius.pill }} />
+      <ThemedText type="label" themeColor="inkSoft" style={{ marginHorizontal: Spacing.three }}>
+        {label}
+      </ThemedText>
+      <View style={{ flex: 1, height: 1.5, backgroundColor: theme.line, borderRadius: Radius.pill }} />
     </View>
   );
 }

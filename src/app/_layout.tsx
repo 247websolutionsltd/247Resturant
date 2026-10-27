@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/theme';
+import { CartProvider } from '@/context/CartContext';
+import { OrdersProvider } from '@/context/OrdersContext';
 import { AppThemeProvider, AuthProvider, useAppTheme, useAuth } from '@/context/PageContext';
-import { WalletProvider } from '@/context/WalletContext';
 import { goReplace } from '@/lib/nav';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useSegments } from 'expo-router';
 import { useEffect } from 'react';
@@ -52,12 +53,14 @@ function Shell() {
 
 export default function RootLayout() {
   return (
-    // Verdi is dark-first; users can switch to light in Profile > Appearance.
-    <AppThemeProvider initialTheme="dark">
+    // Ember is light-first (warm cream); users can switch to dark in Profile.
+    <AppThemeProvider initialTheme="light">
       <AuthProvider>
-        <WalletProvider>
-          <Shell />
-        </WalletProvider>
+        <OrdersProvider>
+          <CartProvider>
+            <Shell />
+          </CartProvider>
+        </OrdersProvider>
       </AuthProvider>
     </AppThemeProvider>
   );

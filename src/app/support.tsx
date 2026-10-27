@@ -5,15 +5,17 @@ import { Card, ListRow } from "@/components/ui";
 import { Brand } from "@/constants/brand";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { formatMoney } from "@/lib/format";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Linking, TouchableOpacity, View } from "react-native";
+import { Linking, View } from "react-native";
 
 const faqs = [
-  { q: "How long do transfers take?", a: "Transfers to other Nigerian banks usually arrive within seconds. If a transfer is still pending after 30 minutes, contact us with the reference." },
-  { q: "Are there fees?", a: `Sending to another ${Brand.name} account is free. Transfers to other banks cost ₦10.75. Adding money by bank transfer is free.` },
-  { q: "How do locked savings work?", a: "Locked goals earn a higher rate, but you can't withdraw until the due date. Flexible goals can be withdrawn any time." },
-  { q: "I think my card was compromised", a: "Freeze your card immediately from the Cards tab, then contact support so we can issue you a new one." },
+  { q: "How long will my order take?", a: "Most delivery orders arrive in 30–45 minutes, depending on the dishes and traffic. Pickup orders are usually ready in 15–25 minutes. You can follow every step in the Orders tab." },
+  { q: "How much is delivery?", a: `Delivery is ${formatMoney(Brand.deliveryFee)}, and free when your food comes to ${formatMoney(Brand.freeDeliveryOver)} or more. Pickup is always free. The minimum order is ${formatMoney(Brand.minOrder)}.` },
+  { q: "Can I change or cancel my order?", a: "You can cancel from the order screen until the kitchen sends it out. After that, call us right away and we'll do our best to help." },
+  { q: "How do points work?", a: "You earn 1 point for every ₦100 you spend. Reach 500 points for Silver and 1,500 for Gold." },
+  { q: "My order is wrong or missing something", a: `We're sorry! Call ${Brand.supportPhone} or email ${Brand.supportEmail} with your order reference and we'll make it right.` },
 ];
 
 export default function Support() {
@@ -25,8 +27,8 @@ export default function Support() {
       <Header title="Help & support" />
       <View style={{ paddingHorizontal: Spacing.three }}>
         <Card style={{ paddingVertical: 0 }}>
-          <ListRow icon="mail-outline" title="Email us" subtitle={Brand.supportEmail} onPress={() => Linking.openURL(`mailto:${Brand.supportEmail}`)} />
-          <ListRow icon="call-outline" title="Call us" subtitle={Brand.supportPhone} onPress={() => Linking.openURL(`tel:${Brand.supportPhone.replace(/\s/g, "")}`)} last />
+          <ListRow icon="call-outline" title="Call the kitchen" subtitle={Brand.supportPhone} onPress={() => Linking.openURL(`tel:${Brand.supportPhone.replace(/\s/g, "")}`)} />
+          <ListRow icon="mail-outline" title="Email us" subtitle={Brand.supportEmail} onPress={() => Linking.openURL(`mailto:${Brand.supportEmail}`)} last />
         </Card>
 
         <ThemedText type="big" style={{ marginTop: Spacing.five, marginBottom: Spacing.three }}>Common questions</ThemedText>

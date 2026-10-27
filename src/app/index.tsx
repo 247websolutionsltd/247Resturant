@@ -1,15 +1,15 @@
-import { Logo } from '@/components/brand';
+import { LogoMark } from '@/components/brand';
 import { ThemedText } from '@/components/themed-text';
-import { HeroDecor } from '@/components/ui';
+import { Sprinkles } from '@/components/ui';
 import { Brand } from '@/constants/brand';
-import { Colors } from '@/constants/theme';
+import { Colors, SerifFont } from '@/constants/theme';
 import { useAuth } from '@/context/PageContext';
 import { goReplace } from '@/lib/nav';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useRef, useState } from 'react';
 import { StatusBar, View } from 'react-native';
 
-const MIN_SPLASH_MS = 900;
+const MIN_SPLASH_MS = 1100;
 const MAX_WAIT_MS = 5000; // don't hang on the splash if the network is down
 
 /** Branded splash. Routes to home (signed in), sign-in (returning) or onboarding (first launch). */
@@ -48,11 +48,15 @@ export default function Splash() {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.hero, alignItems: 'center', justifyContent: 'center' }}>
       <StatusBar barStyle="light-content" />
-      <HeroDecor />
-      <Logo size={64} light />
-      <ThemedText style={{ color: Colors.heroMuted, marginTop: 14, letterSpacing: 2, fontWeight: '600' }}>
-        {Brand.tagline.toUpperCase()}
+      <Sprinkles opacity={0.2} />
+      <LogoMark size={96} light />
+      <ThemedText
+        style={{ fontFamily: SerifFont, color: '#FFF8F0', fontSize: 44, lineHeight: 50, fontWeight: '800', letterSpacing: -1, marginTop: 20 }}
+      >
+        {Brand.name}
       </ThemedText>
+      <ThemedText style={{ color: Colors.heroMuted, letterSpacing: 6, fontWeight: '800', fontSize: 12, marginTop: 2 }}>KITCHEN</ThemedText>
+      <ThemedText style={{ color: Colors.heroMuted, marginTop: 28, fontWeight: '600' }}>{Brand.tagline}</ThemedText>
     </View>
   );
 }

@@ -2,25 +2,16 @@ import { Brand } from "@/constants/brand";
 
 const group = (n: number) => Math.floor(Math.abs(n)).toLocaleString("en-NG");
 
-/** ₦12,345.60 */
+/** ₦5,500 (menu prices are whole naira; pass `decimals` for kobo). */
 export function formatMoney(value: number, opts: { decimals?: boolean; sign?: boolean } = {}) {
-  const { decimals = true, sign = false } = opts;
+  const { decimals = false, sign = false } = opts;
   const abs = Math.abs(value);
   const kobo = Math.round((abs - Math.floor(abs)) * 100)
     .toString()
     .padStart(2, "0");
   const body = `${Brand.currency}${group(abs)}${decimals ? "." + kobo : ""}`;
-  if (!sign) return value < 0 ? `-${body}` : body;
-  return value < 0 ? `-${body}` : `+${body}`;
-}
-
-/** Splits an amount for the "big number, small kobo" display. */
-export function splitMoney(value: number) {
-  const abs = Math.abs(value);
-  const kobo = Math.round((abs - Math.floor(abs)) * 100)
-    .toString()
-    .padStart(2, "0");
-  return { whole: group(value), kobo };
+  if (value < 0) return `-${body}`;
+  return sign ? `+${body}` : body;
 }
 
 /** 1.2M / 45K style shorthand. */
@@ -32,25 +23,14 @@ export function compactMoney(value: number) {
   return `${Brand.currency}${Math.round(value)}`;
 }
 
-export function parseAmount(text: string) {
-  const n = Number(String(text).replace(/[^0-9.]/g, ""));
-  return Number.isFinite(n) ? n : 0;
-}
-
-/** Formats as the user types: "12500" -> "12,500" */
-export function groupDigits(text: string) {
-  const clean = text.replace(/[^0-9.]/g, "");
-  const [whole, dec] = clean.split(".");
-  const grouped = (whole || "").replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return dec !== undefined ? `${grouped || "0"}.${dec.slice(0, 2)}` : grouped;
-}
+export const plural = (n: number, one: string, many = one + "s") => `${n} ${n === 1 ? one : many}`;
 
 const DAY = 86_400_000;
 const startOfDay = (t: number) => {
   const d = new Date(t);
   d.setHours(0, 0, 0, 0);
   return d.getTime();
-}
+};
 
 export function dayLabel(ts: number, now = Date.now()) {
   const diff = Math.round((startOfDay(now) - startOfDay(ts)) / DAY);
@@ -82,8 +62,6 @@ export function greeting(now = new Date()) {
   if (h < 17) return "Good afternoon";
   return "Good evening";
 }
-
-export const maskAccount = (acc: string) => (acc.length > 4 ? `••••${acc.slice(-4)}` : acc);
 
 export function timeAgo(ts: number, now = Date.now()) {
   const s = Math.max(0, Math.round((now - ts) / 1000));
